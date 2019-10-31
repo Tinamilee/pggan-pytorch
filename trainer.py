@@ -147,12 +147,12 @@ class trainer:
             # grow network.
             if floor(self.resl) != prev_resl and floor(self.resl)<self.max_resl+1:
                 self.lr = self.lr * float(self.config.lr_decay)
-                self.G.grow_network(floor(self.resl))
+                self.G.module.grow_network(floor(self.resl))
                 #self.Gs.grow_network(floor(self.resl))
-                self.D.grow_network(floor(self.resl))
+                self.D.module.grow_network(floor(self.resl))
                 self.renew_everything()
-                self.fadein['gen'] = dict(self.G.model.named_children())['fadein_block']
-                self.fadein['dis'] = dict(self.D.model.named_children())['fadein_block']
+                self.fadein['gen'] = dict(self.G.module.model.named_children())['fadein_block']
+                self.fadein['dis'] = dict(self.D.module.model.named_children())['fadein_block']
                 self.flag_flush_gen = True
                 self.flag_flush_dis = True
 
@@ -173,7 +173,7 @@ class trainer:
         self.x_tilde = torch.FloatTensor(self.loader.batchsize, 3, self.loader.imsize, self.loader.imsize)
         self.real_label = torch.FloatTensor(self.loader.batchsize).fill_(1)
         self.fake_label = torch.FloatTensor(self.loader.batchsize).fill_(0)
-		
+                
         # enable cuda
         if self.use_cuda:
             self.z = self.z.cuda()
@@ -267,8 +267,7 @@ class trainer:
                 self.fx = self.D(self.x)
                 self.fx_tilde = self.D(self.x_tilde.detach())
                 
-		        loss_d = self.mse(self.fx.squeeze(), self.real_label) + \
-                                  self.mse(self.fx_tilde, self.fake_label)
+                loss_d = self.mse(self.fx.squeeze(), self.real_label) + self.mse(self.fx_tilde, self.fake_label)
                 loss_d.backward()
                 self.opt_d.step()
 
@@ -298,8 +297,8 @@ class trainer:
                 if self.use_tb:
                     with torch.no_grad():
                         x_test = self.G(self.z_test)
-                    self.tb.add_scalar('data/loss_g', loss_g[0].item(), self.globalIter)
-                    self.tb.add_scalar('data/loss_d', loss_d[0].item(), self.globalIter)
+                    self.tb.add_scalar('data/loss_g', loss_g.item(), self.globalIter)
+                    self.tb.add_scalar('data/loss_d', loss_d.item(), self.globalIter)
                     self.tb.add_scalar('tick/lr', self.lr, self.globalIter)
                     self.tb.add_scalar('tick/cur_resl', int(pow(2,floor(self.resl))), self.globalIter)
                     '''IMAGE GRID
