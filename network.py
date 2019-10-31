@@ -316,6 +316,7 @@ class Encoder(nn.Module):
         self.flag_wn = config.flag_wn
         self.flag_leaky = config.flag_leaky
         self.flag_tanh = config.flag_tanh
+        self.flag_sigmoid = config.flag_sigmoid
         self.flag_norm_latent = config.flag_norm_latent
         self.nc = config.nc
         self.nz = config.nz
