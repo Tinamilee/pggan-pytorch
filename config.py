@@ -7,6 +7,7 @@ parser = argparse.ArgumentParser('PGGAN')
 
 ## general settings.
 parser.add_argument('--train_data_root', type=str, default='~/project/gitlab/painting/pytorch-CycleGAN-and-pix2pix/datasets/painting/trainB')
+parser.add_argument('--train_origin_root', type=str, default='~/project/gitlab/painting/pytorch-CycleGAN-and-pix2pix/datasets/painting/trainA')
 parser.add_argument('--random_seed', type=int, default=int(time.time()))
 parser.add_argument('--n_gpu', type=int, default=1)             # for Multi-GPU training.
 

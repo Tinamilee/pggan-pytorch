@@ -50,10 +50,13 @@ class trainer:
         # network and cirterion
         self.G = net.Generator(config)
         self.D = net.Discriminator(config)
+        self.E = net.Encoder(config)
         print ('Generator structure: ')
         print(self.G.model)
         print ('Discriminator structure: ')
         print(self.D.model)
+        print('Encoder structure: ')
+        print(self.E.model)
         self.mse = torch.nn.MSELoss()
         if self.use_cuda:
             self.mse = self.mse.cuda()
@@ -61,12 +64,14 @@ class trainer:
             if config.n_gpu==1:
                 self.G = torch.nn.DataParallel(self.G).cuda(device=0)
                 self.D = torch.nn.DataParallel(self.D).cuda(device=0)
+                self.E = torch.nn.DataParallel(self.E).cuda(device=0)
             else:
                 gpus = []
                 for i  in range(config.n_gpu):
                     gpus.append(i)
                 self.G = torch.nn.DataParallel(self.G, device_ids=gpus).cuda()
-                self.D = torch.nn.DataParallel(self.D, device_ids=gpus).cuda()  
+                self.D = torch.nn.DataParallel(self.D, device_ids=gpus).cuda()
+                self.E = torch.nn.DataParallel(self.E, device_ids=gpus).cuda()
 
         
         # define tensors, ship model to cuda, and get dataloader.
@@ -165,7 +170,9 @@ class trainer:
     def renew_everything(self):
         # renew dataloader.
         self.loader = DL.dataloader(config)
+        self.originloader = DL.origin_imgloader(config)
         self.loader.renew(min(floor(self.resl), self.max_resl))
+        self.originloader.renew(5)
         
         # define tensors
         self.z = torch.FloatTensor(self.loader.batchsize, self.nz)
@@ -261,7 +268,10 @@ class trainer:
                 self.x.data = self.feed_interpolated_input(self.loader.get_batch())
                 if self.flag_add_noise:
                     self.x = self.add_noise(self.x)
-                self.z.data.resize_(self.loader.batchsize, self.nz).normal_(0.0, 1.0)
+                #self.z.data.resize_(self.loader.batchsize, self.nz).normal_(0.0, 1.0)
+                #  encoder
+                self.originX.data = self.feed_interpolated_input(self.originloader.get_batch())
+                self.z = self.E(self.originX)
                 self.x_tilde = self.G(self.z)
                
                 self.fx = self.D(self.x)

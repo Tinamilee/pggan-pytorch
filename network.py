@@ -306,7 +306,59 @@ class Discriminator(nn.Module):
         x = self.model(x)
         return x
 
- 
+
+class Encoder(nn.Module):
+    def __init__(self, config):
+        super(Encoder, self).__init__()
+        self.config = config
+        self.flag_bn = config.flag_bn
+        self.flag_pixelwise = config.flag_pixelwise
+        self.flag_wn = config.flag_wn
+        self.flag_leaky = config.flag_leaky
+        self.flag_tanh = config.flag_tanh
+        self.flag_norm_latent = config.flag_norm_latent
+        self.nc = config.nc
+        self.nz = config.nz
+        self.ngf = config.ngf
+        self.layer_name = None
+        self.module_names = []
+        self.model = self.get_init_gen()
+
+    def first_block(self):
+        layers = []
+        if self.flag_norm_latent:
+            layers.append(pixelwise_norm_layer())
+        layers = conv(layers, 3, 128, 5, 1, 0, self.flag_leaky, self.flag_bn, self.flag_wn,
+                        self.flag_pixelwise)
+        layers = conv(layers, 128, 256, 5, 1, 0, self.flag_leaky, self.flag_bn, self.flag_wn, self.flag_pixelwise)
+        layers = conv(layers, 256, 512, 5, 1, 0, self.flag_leaky, self.flag_bn, self.flag_wn, self.flag_pixelwise)
+        layers = linear(layers, 512, 1024, sig=self.flag_sigmoid, wn=self.flag_wn)
+        return nn.Sequential(*layers), 1024
+
+    def to_latent_block(self, c_in):
+        layers = []
+        layers = linear(layers, 1024, 512, sig=self.flag_sigmoid, wn=self.flag_wn)
+        layers.append(nn.Tanh())
+        return nn.Sequential(*layers)
+
+    def get_init_gen(self):
+        model = nn.Sequential()
+        first_block, dim = self.first_block()
+        model.add_module('first_block', first_block)
+        model.add_module('to_latent_block', self.to_latent_block(dim))
+        self.module_names = get_module_names(model)
+        return model
+
+    def freeze_layers(self):
+        # let's freeze pretrained blocks. (Found freezing layers not helpful, so did not use this func.)
+        print('freeze pretrained weights ... ')
+        for param in self.model.parameters():
+            param.requires_grad = False
+
+    def forward(self, x):
+        x = self.model(x.view(x.size(0), -1, 1, 1))
+        return x
+
 
 
 
