@@ -357,7 +357,7 @@ class Encoder(nn.Module):
             param.requires_grad = False
 
     def forward(self, x):
-        x = x(x, 32, 32)
+        #x = x.resize(x, 32, 32)
         x = self.model(x.view(x.size(0), -1, 1, 1))
         return x
 
