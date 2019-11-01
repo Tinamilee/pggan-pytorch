@@ -9,7 +9,7 @@ import utils as utils
 
 
 use_cuda = True
-checkpoint_path = 'repo/model/gen_R8_T55.pth.tar'
+checkpoint_path = config.repo_path+'repo/model/gen_R8_T55.pth.tar'
 n_intp = 20
 
 # load trained model.
@@ -32,7 +32,7 @@ test_model.module.load_state_dict(checkpoint['state_dict'])
 
 # create folder.
 for i in range(1000):
-    name = 'repo/interpolation/try_{}'.format(i)
+    name = config.repo_path+'repo/interpolation/try_{}'.format(i)
     if not os.path.exists(name):
         os.system('mkdir -p {}'.format(name))
         break;

@@ -7,14 +7,14 @@ from torchvision import datasets
 from tensorboardX import SummaryWriter
 import os, sys
 import utils as utils
-
+from config import config
 
 class tf_recorder:
     def __init__(self):
-        utils.mkdir('repo/tensorboard')
+        utils.mkdir(config.repo_path+'repo/tensorboard')
         
         for i in range(1000):
-            self.targ = 'repo/tensorboard/try_{}'.format(i)
+            self.targ = config.repo_path+'repo/tensorboard/try_{}'.format(i)
             if not os.path.exists(self.targ):
                 self.writer = SummaryWriter(self.targ)
                 break

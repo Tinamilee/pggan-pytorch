@@ -325,16 +325,16 @@ class trainer:
                 tqdm.write(log_msg)
 
                 # save model.
-                self.snapshot('repo/model')
+                self.snapshot(config.repo_path+'repo/model')
 
                 # save image grid.
                 if self.globalIter%self.config.save_img_every == 0:
                     with torch.no_grad():
                         x_test = self.G(self.z_test)
-                    utils.mkdir('repo/save/grid')
-                    utils.save_image_grid(x_test.data, 'repo/save/grid/{}_{}_G{}_D{}.jpg'.format(int(self.globalIter/self.config.save_img_every), self.phase, self.complete['gen'], self.complete['dis']))
-                    utils.mkdir('repo/save/resl_{}'.format(int(floor(self.resl))))
-                    utils.save_image_single(x_test.data, 'repo/save/resl_{}/{}_{}_G{}_D{}.jpg'.format(int(floor(self.resl)),int(self.globalIter/self.config.save_img_every), self.phase, self.complete['gen'], self.complete['dis']))
+                    utils.mkdir(config.repo_path+'repo/save/grid')
+                    utils.save_image_grid(x_test.data, config.repo_path+'repo/save/grid/{}_{}_G{}_D{}.jpg'.format(int(self.globalIter/self.config.save_img_every), self.phase, self.complete['gen'], self.complete['dis']))
+                    utils.mkdir(config.repo_path+'repo/save/resl_{}'.format(int(floor(self.resl))))
+                    utils.save_image_single(x_test.data, config.repo_path+'repo/save/resl_{}/{}_{}_G{}_D{}.jpg'.format(int(floor(self.resl)),int(self.globalIter/self.config.save_img_every), self.phase, self.complete['gen'], self.complete['dis']))
 
                 # tensorboard visualization.
                 if self.use_tb:
