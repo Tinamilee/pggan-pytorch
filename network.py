@@ -329,10 +329,10 @@ class Encoder(nn.Module):
         layers = []
         if self.flag_norm_latent:
             layers.append(pixelwise_norm_layer())
-        layers = conv(layers, 3, 128, 5, 1, 0, self.flag_leaky, self.flag_bn, self.flag_wn,
+        layers = conv(layers, 3, 128, 5, [1,2,2,1], 0, self.flag_leaky, self.flag_bn, self.flag_wn,
                         self.flag_pixelwise)
-        layers = conv(layers, 128, 256, 5, 1, 0, self.flag_leaky, self.flag_bn, self.flag_wn, self.flag_pixelwise)
-        layers = conv(layers, 256, 512, 5, 1, 0, self.flag_leaky, self.flag_bn, self.flag_wn, self.flag_pixelwise)
+        layers = conv(layers, 128, 256, 5, [1,2,2,1], 0, self.flag_leaky, self.flag_bn, self.flag_wn, self.flag_pixelwise)
+        layers = conv(layers, 256, 512, 5, [1,2,2,1], 0, self.flag_leaky, self.flag_bn, self.flag_wn, self.flag_pixelwise)
         layers = linear(layers, 512, 1024, sig=self.flag_sigmoid, wn=self.flag_wn)
         return nn.Sequential(*layers), 1024
 
@@ -357,6 +357,7 @@ class Encoder(nn.Module):
             param.requires_grad = False
 
     def forward(self, x):
+        x = x(x, 32, 32)
         x = self.model(x.view(x.size(0), -1, 1, 1))
         return x
 
