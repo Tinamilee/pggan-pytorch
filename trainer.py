@@ -11,6 +11,7 @@ from tqdm import tqdm
 import tf_recorder as tensorboard
 import utils as utils
 import numpy as np
+from vgg import VGGNet
 # import tensorflow as tf
 
 class trainer:
@@ -282,9 +283,40 @@ class trainer:
                 loss_d.backward()
                 self.opt_d.step()
 
+                # compute vgg loss
+                vgg = VGGNet().cuda().eval()
+                target_features = vgg(self.x_tilde)
+                content_features = vgg(self.originX)
+                style_features = vgg(self.x)
+                style_loss = 0
+                content_loss = 0
+                for f1, f2, f3 in zip(target_features, content_features, style_features):
+                    # Compute content loss with target and content images
+                    # 计算content损失：target - content
+                    content_loss += torch.mean((f1 - f2) ** 2)
+
+                    # Reshape convolutional feature maps
+                    # Reshape 卷积特征图
+                    _, c, h, w = f1.size()
+                    f1 = f1.view(c, h * w)
+                    f3 = f3.view(c, h * w)
+
+                    # Compute gram matrix
+                    # 计算Gram矩阵（格拉姆矩阵）
+                    f1 = torch.mm(f1, f1.t())
+                    f3 = torch.mm(f3, f3.t())
+
+                    # Compute style loss with target and style images
+                    # 计算style损失：tartget - style
+                    style_loss += torch.mean((f1 - f3) ** 2) / (c * h * w)
+
+                # Compute total loss, backprop and optimize
+                # 计算全部损失，并进行反向传播和优化
+                vgg_loss = content_loss + 100 * style_loss
+
                 # update generator.
                 fx_tilde = self.D(self.x_tilde)
-                loss_g = self.mse(fx_tilde.squeeze(), self.real_label.detach())
+                loss_g = self.mse(fx_tilde.squeeze(), self.real_label.detach()) + vgg_loss
                 loss_g.backward()
                 self.opt_g.step()
                 
