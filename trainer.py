@@ -319,7 +319,7 @@ class trainer:
 
                 # Compute total loss, backprop and optimize
                 # 计算全部损失，并进行反向传播和优化
-                vgg_loss = content_loss + 100 * style_loss
+                vgg_loss = content_loss + style_loss
 
                 # update generator.
                 fx_tilde = self.D(self.x_tilde)
