@@ -172,7 +172,7 @@ class trainer:
         self.loader = DL.dataloader(config)
         self.originloader = DL.origin_imgloader(config)
         self.loader.renew(min(floor(self.resl), self.max_resl))
-        self.originloader.renew(8)
+        self.originloader.renew(5)
         
         # define tensors
         self.z = torch.FloatTensor(self.loader.batchsize, self.nz)
@@ -272,9 +272,6 @@ class trainer:
                 #self.z.data.resize_(self.loader.batchsize, self.nz).normal_(0.0, 1.0)
                 #  encoder
                 self.originX.data = self.feed_interpolated_input(self.originloader.get_batch())
-                a = self.originX.shape[0]
-                p = transforms.Compose([transforms.Scale((a, 3, 32, 32))])
-                self.originX = p(self.originX)
                 self.z = self.E(self.originX)
                 self.x_tilde = self.G(self.z)
                
