@@ -327,7 +327,6 @@ class Encoder(nn.Module):
 
     def first_block(self):
         layers = []
-        layers.append(minibatch_std_concat_layer())
         layers = conv(layers, 3, 128, 5, 1, 0, self.flag_leaky, self.flag_bn, self.flag_wn,
                         self.flag_pixelwise)
         layers = conv(layers, 128, 256, 5, 1, 0, self.flag_leaky, self.flag_bn, self.flag_wn, self.flag_pixelwise)
