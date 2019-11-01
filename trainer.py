@@ -298,7 +298,6 @@ class trainer:
                 content_loss = 0
                 for f1, f2, f3 in zip(target_features, content_features, style_features):
                     # Compute content loss with target and content images
-                    # content：target - content
                     content_loss += torch.mean((f1 - f2) ** 2)
 
                     # Reshape convolutional feature maps
