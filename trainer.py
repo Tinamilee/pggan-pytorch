@@ -307,14 +307,15 @@ class trainer:
                     f1 = f1.view(bs, c, h * w)
                     f3 = f3.view(bs, c, h * w)
 
-                    # Compute gram matrix
-                    # 计算Gram矩阵（格拉姆矩阵）
-                    f1 = torch.mm(f1, f1.t())
-                    f3 = torch.mm(f3, f3.t())
+                    f1_t = f1.transpose(1, 2)
+                    f3_t = f3.transpose(1, 2)
+
+                    f1 = f1.bmm(f1_t)
+                    f3 = f3.bmm(f3_t)
 
                     # Compute style loss with target and style images
                     # 计算style损失：tartget - style
-                    style_loss += torch.mean((f1 - f3) ** 2) / (bs * c * h * w)
+                    style_loss += torch.mean((f1 - f3) ** 2) / (c * h * w)
 
                 # Compute total loss, backprop and optimize
                 # 计算全部损失，并进行反向传播和优化
