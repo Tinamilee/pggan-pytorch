@@ -62,9 +62,9 @@ class trainer:
             self.mse = self.mse.cuda()
             torch.cuda.manual_seed(config.random_seed)
             if config.n_gpu==1:
-                self.G = torch.nn.DataParallel(self.G).cuda(device=0)
-                self.D = torch.nn.DataParallel(self.D).cuda(device=0)
-                self.E = torch.nn.DataParallel(self.E).cuda(device=0)
+                self.G = torch.nn.DataParallel(self.G).cuda()
+                self.D = torch.nn.DataParallel(self.D).cuda()
+                self.E = torch.nn.DataParallel(self.E).cuda()
             else:
                 gpus = []
                 for i  in range(config.n_gpu):
