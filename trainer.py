@@ -27,7 +27,7 @@ class trainer:
         self.nz = config.nz
         self.optimizer = config.optimizer
 
-        self.resl = 5           # we start from 2^2 = 4
+        self.resl = 2           # we start from 2^2 = 4
         self.lr = config.lr
         self.eps_drift = config.eps_drift
         self.smoothing = config.smoothing
