@@ -331,13 +331,13 @@ class Encoder(nn.Module):
                         self.flag_pixelwise)
         layers = conv(layers, 128, 256, 5, 1, 0, self.flag_leaky, self.flag_bn, self.flag_wn, self.flag_pixelwise)
         layers = conv(layers, 256, 512, 5, 1, 0, self.flag_leaky, self.flag_bn, self.flag_wn, self.flag_pixelwise)
-        layers = linear(layers, 512, 1024, sig=self.flag_sigmoid, wn=self.flag_wn)
+        #layers = linear(layers, 512, 1024, sig=self.flag_sigmoid, wn=self.flag_wn)
         return nn.Sequential(*layers), 1024
 
     def to_latent_block(self, c_in):
         layers = []
-        layers = linear(layers, 1024, 512, sig=self.flag_sigmoid, wn=self.flag_wn)
-        layers.append(nn.Tanh())
+        #layers = linear(layers, 1024, 512, sig=self.flag_sigmoid, wn=self.flag_wn)
+        #layers.append(nn.Tanh())
         return nn.Sequential(*layers)
 
     def get_init_gen(self):
