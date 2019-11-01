@@ -303,9 +303,9 @@ class trainer:
 
                     # Reshape convolutional feature maps
                     # Reshape 卷积特征图
-                    _, c, h, w = f1.size()
-                    f1 = f1.view(c, h * w)
-                    f3 = f3.view(c, h * w)
+                    bs, c, h, w = f1.size()
+                    f1 = f1.view(bs, c, h * w)
+                    f3 = f3.view(bs, c, h * w)
 
                     # Compute gram matrix
                     # 计算Gram矩阵（格拉姆矩阵）
@@ -314,7 +314,7 @@ class trainer:
 
                     # Compute style loss with target and style images
                     # 计算style损失：tartget - style
-                    style_loss += torch.mean((f1 - f3) ** 2) / (c * h * w)
+                    style_loss += torch.mean((f1 - f3) ** 2) / (bs * c * h * w)
 
                 # Compute total loss, backprop and optimize
                 # 计算全部损失，并进行反向传播和优化
