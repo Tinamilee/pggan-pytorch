@@ -298,11 +298,10 @@ class trainer:
                 content_loss = 0
                 for f1, f2, f3 in zip(target_features, content_features, style_features):
                     # Compute content loss with target and content images
-                    # 计算content损失：target - content
+                    # content：target - content
                     content_loss += torch.mean((f1 - f2) ** 2)
 
                     # Reshape convolutional feature maps
-                    # Reshape 卷积特征图
                     bs, c, h, w = f1.size()
                     f1 = f1.view(bs, c, h * w)
                     f3 = f3.view(bs, c, h * w)
