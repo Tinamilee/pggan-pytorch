@@ -272,7 +272,8 @@ class trainer:
                 #self.z.data.resize_(self.loader.batchsize, self.nz).normal_(0.0, 1.0)
                 #  encoder
                 self.originX.data = self.feed_interpolated_input(self.originloader.get_batch())
-                p = transforms.Compose([transforms.Scale((3, 32, 32))])
+                a = self.originX.shape[0]
+                p = transforms.Compose([transforms.Scale((a, 3, 32, 32))])
                 self.originX = p(self.originX)
                 self.z = self.E(self.originX)
                 self.x_tilde = self.G(self.z)
