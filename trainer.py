@@ -27,7 +27,7 @@ class trainer:
         self.nz = config.nz
         self.optimizer = config.optimizer
 
-        self.resl = 2           # we start from 2^2 = 4
+        self.resl = 5           # we start from 2^2 = 4
         self.lr = config.lr
         self.eps_drift = config.eps_drift
         self.smoothing = config.smoothing
@@ -285,9 +285,15 @@ class trainer:
 
                 # compute vgg loss
                 vgg = VGGNet().cuda().eval()
-                target_features = vgg(self.x_tilde)
-                content_features = vgg(self.originX)
-                style_features = vgg(self.x)
+                target = self.x_tilde
+                content = self.originX
+                style = self.x
+                target.data.resize_(self.loader.batchsize, self.loader.imsize, self.loader.imsize)
+                content.data.resize_(self.loader.batchsize, self.loader.imsize, self.loader.imsize)
+                style.data.resize_(self.loader.batchsize, self.loader.imsize, self.loader.imsize)
+                target_features = vgg(target)
+                content_features = vgg(content)
+                style_features = vgg(style)
                 style_loss = 0
                 content_loss = 0
                 for f1, f2, f3 in zip(target_features, content_features, style_features):
@@ -316,6 +322,8 @@ class trainer:
 
                 # update generator.
                 fx_tilde = self.D(self.x_tilde)
+
+
                 loss_g = self.mse(fx_tilde.squeeze(), self.real_label.detach()) + vgg_loss
                 loss_g.backward()
                 self.opt_g.step()
