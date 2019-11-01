@@ -288,9 +288,9 @@ class trainer:
                 target = self.x_tilde
                 content = self.originX
                 style = self.x
-                target.data.resize_(self.loader.batchsize, self.loader.imsize, self.loader.imsize)
-                content.data.resize_(self.loader.batchsize, self.loader.imsize, self.loader.imsize)
-                style.data.resize_(self.loader.batchsize, self.loader.imsize, self.loader.imsize)
+                target.data.resize_(self.loader.batchsize, 3, self.loader.imsize, self.loader.imsize)
+                content.data.resize_(self.loader.batchsize, 3, self.loader.imsize, self.loader.imsize)
+                style.data.resize_(self.loader.batchsize, 3, self.loader.imsize, self.loader.imsize)
                 target_features = vgg(target)
                 content_features = vgg(content)
                 style_features = vgg(style)
