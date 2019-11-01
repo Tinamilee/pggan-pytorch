@@ -172,12 +172,12 @@ class trainer:
         self.loader = DL.dataloader(config)
         self.originloader = DL.origin_imgloader(config)
         self.loader.renew(min(floor(self.resl), self.max_resl))
-        self.originloader.renew(5)
+        self.originloader.renew(min(floor(self.resl), self.max_resl))
         
         # define tensors
         self.z = torch.FloatTensor(self.loader.batchsize, self.nz)
         self.x = torch.FloatTensor(self.loader.batchsize, 3, self.loader.imsize, self.loader.imsize)
-        self.originX = torch.FloatTensor(self.loader.batchsize, 3, self.loader.imsize, self.loader.imsize)
+        self.originX = torch.FloatTensor(self.loader.batchsize, 3, 32, 32)
         self.x_tilde = torch.FloatTensor(self.loader.batchsize, 3, self.loader.imsize, self.loader.imsize)
         self.real_label = torch.FloatTensor(self.loader.batchsize).fill_(1)
         self.fake_label = torch.FloatTensor(self.loader.batchsize).fill_(0)

@@ -72,7 +72,7 @@ class origin_imgloader:
         self.dataset = ImageFolder(
             root=self.root,
             transform=transforms.Compose([
-                transforms.Resize(size=(self.imsize, self.imsize), interpolation=Image.NEAREST),
+                transforms.Resize(size=(32, 32), interpolation=Image.NEAREST),
                 transforms.ToTensor(),
             ]))
 
