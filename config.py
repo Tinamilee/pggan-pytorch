@@ -10,6 +10,7 @@ parser.add_argument('--train_data_root', type=str, default='./datasets/trainB')
 parser.add_argument('--train_origin_root', type=str, default='./datasets/trainA')
 parser.add_argument('--random_seed', type=int, default=int(time.time()))
 parser.add_argument('--n_gpu', type=int, default=1)             # for Multi-GPU training.
+parser.add_argument('--decoderOnly', type=bool, default=False)  # for decoder
 
 ## training parameters.
 parser.add_argument('--lr', type=float, default=0.001)          # learning rate.

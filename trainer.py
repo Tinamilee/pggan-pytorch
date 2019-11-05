@@ -34,6 +34,7 @@ class trainer:
         self.max_resl = config.max_resl
         self.trns_tick = config.trns_tick
         self.stab_tick = config.stab_tick
+        self.decoderOnly = config.decoderOnly
         self.TICK = config.TICK
         self.globalIter = 0
         self.globalTick = 0
@@ -273,6 +274,10 @@ class trainer:
                 #self.z.data.resize_(self.loader.batchsize, self.nz).normal_(0.0, 1.0)
                 #  encoder
                 self.originX.data = self.feed_interpolated_input(self.originloader.get_batch())
+                if self.decoderOnly == False:
+                    self.z = self.E(self.originX)
+                else:
+                    self.z.data.resize_(self.loader.batchsize, self.nz).normal_(0.0, 1.0)
                 self.z = self.E(self.originX)
                 self.x_tilde = self.G(self.z)
                
